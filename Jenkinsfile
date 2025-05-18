@@ -31,19 +31,19 @@ pipeline {
             }
         }
 
-        stage('Unit Test'){
+        stage('Unit Test') {
             steps {
                 sh 'mvn test'
             }
         }
 
-        stage('Integration Test'){
+        stage('Integration Test') {
             steps {
                 sh 'mvn verify -DskipUnitTests'
             }
         }
 
-        stage('Checkstyle Code Analysis'){
+        stage('Checkstyle Code Analysis') {
             steps {
                 sh 'mvn checkstyle:checkstyle'
             }
@@ -56,12 +56,11 @@ pipeline {
 
         stage('SonarQube Inspection') {
             steps {
-                withSonarQubeEnv('SonarQube') { 
+                withSonarQubeEnv('SonarQube') {
                     withCredentials([string(credentialsId: 'SonarQube-Token', variable: 'SONAR_TOKEN')]) {
                         sh """
                         mvn sonar:sonar \
                         -Dsonar.projectKey=JavaWebApp-Project \
-                        -Dsonar.host.url=http://13.234.78.161:9000 \
                         -Dsonar.login=$SONAR_TOKEN
                         """
                     }
@@ -71,14 +70,14 @@ pipeline {
 
         stage('SonarQube GateKeeper') {
             steps {
-                timeout(time : 1, unit : 'HOURS'){
+                timeout(time: 1, unit: 'HOURS') {
                     waitForQualityGate abortPipeline: true
                 }
             }
         }
 
-        stage("Nexus Artifact Uploader"){
-            steps{
+        stage("Nexus Artifact Uploader") {
+            steps {
                 nexusArtifactUploader(
                     nexusVersion: 'nexus3',
                     protocol: 'http',
@@ -143,8 +142,8 @@ pipeline {
                 echo 'Sending Slack Notification...'
                 withCredentials([string(credentialsId: 'your-slack-bot-token-id', variable: 'SLACK_BOT_TOKEN')]) {
                     slackSend(
-                        botToken: Slack-Token,
-                        channel: '@your_initial-cicd-pipeline-alerts',  // Replace with your Slack channel name or @username
+                        botToken: SLACK_BOT_TOKEN,
+                        channel: '@your_initial-cicd-pipeline-alerts',
                         color: COLOR_MAP[currentBuild.currentResult] ?: '#CCCCCC',
                         message: "*${currentBuild.currentResult}:* Job '${env.JOB_NAME}' build #${env.BUILD_NUMBER}\nBuild Timestamp: ${env.BUILD_TIMESTAMP}\nWorkspace: ${env.WORKSPACE}\nMore info: ${env.BUILD_URL}"
                     )
