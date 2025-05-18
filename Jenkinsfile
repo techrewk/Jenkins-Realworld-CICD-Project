@@ -58,6 +58,8 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     withCredentials([string(credentialsId: 'SonarQube-Token', variable: 'SONAR_TOKEN')]) {
+                       sh 'printenv | grep SONAR'
+
                         sh """
                         mvn sonar:sonar \
                         -Dsonar.projectKey=JavaWebApp-Project \
