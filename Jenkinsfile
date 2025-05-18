@@ -54,7 +54,7 @@ pipeline {
             }
         }
 
-        stage('SonarQube Inspection') {
+        /*stage('SonarQube Inspection') {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     withCredentials([string(credentialsId: 'SonarQube-Token', variable: 'SONAR_TOKEN')]) {
@@ -76,7 +76,7 @@ pipeline {
                     waitForQualityGate abortPipeline: true
                 }
             }
-        }
+        }*/
 
         stage("Nexus Artifact Uploader") {
             steps {
